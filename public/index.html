@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Student Feedback Manager</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ========================= -->
+    <!-- LOGIN SECTION -->
+    <!-- ========================= -->
+
+    <div id="loginSection" class="container">
+
+        <div class="card">
+
+            <h1>Student Login</h1>
+
+            <form id="loginForm">
+
+                <input
+                    type="email"
+                    id="loginEmail"
+                    placeholder="Enter your email"
+                    required
+                >
+
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Enter your password"
+                    required
+                >
+
+                <button type="submit">
+                    Login
+                </button>
+
+            </form>
+
+            <p id="loginMessage"></p>
+
+            <p>
+                Don't have an account?
+            </p>
+
+            <button
+                class="secondary"
+                onclick="showRegister()"
+            >
+                Register
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- REGISTER SECTION -->
+    <!-- ========================= -->
+
+    <div
+        id="registerSection"
+        class="container hidden"
+    >
+
+        <div class="card">
+
+            <h1>Student Register</h1>
+
+            <form id="registerForm">
+
+                <input
+                    type="text"
+                    id="registerName"
+                    placeholder="Enter your name"
+                    required
+                >
+
+                <input
+                    type="email"
+                    id="registerEmail"
+                    placeholder="Enter your email"
+                    required
+                >
+
+                <input
+                    type="password"
+                    id="registerPassword"
+                    placeholder="Enter password"
+                    required
+                >
+
+                <button type="submit">
+                    Register
+                </button>
+
+            </form>
+
+            <p id="registerMessage"></p>
+
+            <p>
+                Already have an account?
+            </p>
+
+            <button
+                class="secondary"
+                onclick="showLogin()"
+            >
+                Login
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- DASHBOARD -->
+    <!-- ========================= -->
+
+    <div
+        id="dashboardSection"
+        class="hidden"
+    >
+
+        <nav>
+
+            <h2>
+                Student Feedback Manager
+            </h2>
+
+            <button onclick="logout()">
+                Logout
+            </button>
+
+        </nav>
+
+
+        <div class="dashboard">
+
+            <!-- CREATE FEEDBACK -->
+
+            <div class="card">
+
+                <h2>Add Feedback</h2>
+
+                <form id="feedbackForm">
+
+                    <label>Rating</label>
+
+                    <select id="rating">
+
+                        <option value="1">
+                            1 - Poor
+                        </option>
+
+                        <option value="2">
+                            2 - Average
+                        </option>
+
+                        <option value="3">
+                            3 - Good
+                        </option>
+
+                        <option value="4">
+                            4 - Very Good
+                        </option>
+
+                        <option value="5" selected>
+                            5 - Excellent
+                        </option>
+
+                    </select>
+
+
+                    <textarea
+                        id="comment"
+                        placeholder="Write your feedback"
+                        required
+                    ></textarea>
+
+
+                    <button type="submit">
+                        Submit Feedback
+                    </button>
+
+                </form>
+
+                <p id="feedbackMessage"></p>
+
+            </div>
+
+
+            <!-- FEEDBACK LIST -->
+
+            <div class="card">
+
+                <h2>My Feedback</h2>
+
+                <div id="feedbackList">
+
+                    <!-- Feedback will appear here -->
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
