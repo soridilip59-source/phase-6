@@ -76,10 +76,10 @@ document
 
             const data = await response.json();
 
-
             document
                 .getElementById("registerMessage")
-                .innerText = data.message;
+                .innerText =
+                data.message || "Registration completed";
 
 
             if (response.ok) {
@@ -98,7 +98,10 @@ document
 
             document
                 .getElementById("registerMessage")
-                .innerText = "Registration failed";
+                .innerText =
+                "Registration failed";
+
+            console.error(error);
 
         }
 
@@ -114,7 +117,6 @@ document
     .addEventListener("submit", async function (e) {
 
         e.preventDefault();
-
 
         const email =
             document.getElementById("loginEmail").value;
@@ -148,13 +150,14 @@ document
 
                 document
                     .getElementById("loginMessage")
-                    .innerText = data.message;
+                    .innerText =
+                    data.message || "Login failed";
 
                 return;
             }
 
 
-            // Save JWT Token
+            // Save JWT token
 
             localStorage.setItem(
                 "token",
@@ -162,18 +165,21 @@ document
             );
 
 
-            // Show Dashboard
+            // Hide login
 
             document
                 .getElementById("loginSection")
                 .classList.add("hidden");
+
+
+            // Show dashboard
 
             document
                 .getElementById("dashboardSection")
                 .classList.remove("hidden");
 
 
-            // Load Feedbacks
+            // Load feedback
 
             getFeedbacks();
 
@@ -181,7 +187,10 @@ document
 
             document
                 .getElementById("loginMessage")
-                .innerText = "Login failed";
+                .innerText =
+                "Login failed";
+
+            console.error(error);
 
         }
 
@@ -199,11 +208,14 @@ document
         e.preventDefault();
 
 
+        const name =
+            document.getElementById("feedbackName").value;
+
         const rating =
             document.getElementById("rating").value;
 
-        const comment =
-            document.getElementById("comment").value;
+        const comments =
+            document.getElementById("comments").value;
 
         const token =
             localStorage.getItem("token");
@@ -217,19 +229,16 @@ document
                     method: "POST",
 
                     headers: {
-
                         "Content-Type": "application/json",
 
-                        "Authorization":
-                            `Bearer ${token}`
-
+                        "Authorization": `Bearer ${token}`
                     },
 
                     body: JSON.stringify({
+                        name,
                         rating,
-                        comment
+                        comments
                     })
-
                 }
             );
 
@@ -238,7 +247,8 @@ document
 
             document
                 .getElementById("feedbackMessage")
-                .innerText = data.message;
+                .innerText =
+                data.message;
 
 
             if (response.ok) {
@@ -256,7 +266,9 @@ document
             document
                 .getElementById("feedbackMessage")
                 .innerText =
-                    "Feedback creation failed";
+                "Feedback creation failed";
+
+            console.error(error);
 
         }
 
@@ -279,14 +291,13 @@ async function getFeedbacks() {
             `${API_URL}/feedback/my-feedback`,
             {
                 headers: {
-                    "Authorization":
-                        `Bearer ${token}`
+                    "Authorization": `Bearer ${token}`
                 }
             }
         );
 
-        const data =
-            await response.json();
+
+        const data = await response.json();
 
 
         const feedbackList =
@@ -296,6 +307,16 @@ async function getFeedbacks() {
         feedbackList.innerHTML = "";
 
 
+        if (!response.ok) {
+
+            feedbackList.innerHTML =
+                `<p>${data.message || "Failed to load feedback"}</p>`;
+
+            return;
+
+        }
+
+
         if (!data.feedbacks ||
             data.feedbacks.length === 0) {
 
@@ -303,49 +324,56 @@ async function getFeedbacks() {
                 "<p>No feedback available</p>";
 
             return;
+
         }
 
 
-        data.feedbacks.forEach(
-            function (feedback) {
+        data.feedbacks.forEach(function (feedback) {
 
-                const div =
-                    document.createElement("div");
-
-
-                div.className =
-                    "feedback-item";
+            const div =
+                document.createElement("div");
 
 
-                div.innerHTML = `
-
-                    <h3>
-                        Rating:
-                        ${feedback.rating}/5
-                    </h3>
-
-                    <p>
-                        ${feedback.comment}
-                    </p>
-
-                    <button
-                        class="delete-btn"
-                        onclick="deleteFeedback('${feedback._id}')"
-                    >
-                        Delete
-                    </button>
-
-                `;
+            div.className =
+                "feedback-item";
 
 
-                feedbackList.appendChild(div);
+            div.innerHTML = `
 
-            }
-        );
+                <h3>
+                    Name: ${feedback.name}
+                </h3>
+
+                <h3>
+                    Rating: ${feedback.rating}/5
+                </h3>
+
+                <p>
+                    Comments: ${feedback.comments}
+                </p>
+
+                <button
+                    class="delete-btn"
+                    onclick="deleteFeedback('${feedback._id}')"
+                >
+                    Delete
+                </button>
+
+            `;
+
+
+            feedbackList.appendChild(div);
+
+        });
 
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
+
+        document
+            .getElementById("feedbackList")
+            .innerHTML =
+            "<p>Error loading feedback</p>";
 
     }
 
@@ -370,22 +398,33 @@ async function deleteFeedback(id) {
                 method: "DELETE",
 
                 headers: {
-                    "Authorization":
-                        `Bearer ${token}`
+                    "Authorization": `Bearer ${token}`
                 }
             }
         );
 
 
-        if (response.ok) {
+        const data = await response.json();
 
-            getFeedbacks();
+
+        if (!response.ok) {
+
+            alert(
+                data.message || "Failed to delete feedback"
+            );
+
+            return;
 
         }
 
+
+        getFeedbacks();
+
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
+
+        alert("Error deleting feedback");
 
     }
 
@@ -414,7 +453,7 @@ function logout() {
 
 
 // ==========================
-// AUTO LOGIN CHECK
+// AUTO LOGIN
 // ==========================
 
 window.addEventListener("load", function () {

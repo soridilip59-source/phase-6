@@ -2,6 +2,7 @@ const express = require("express");
 
 const {
   createFeedback,
+  getAllFeedback,
   getMyFeedback,
   updateFeedback,
   deleteFeedback
@@ -11,16 +12,25 @@ const protect = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-// Create Feedback
+
+// GET ALL FEEDBACK
+router.get("/", getAllFeedback);
+
+
+// CREATE FEEDBACK
 router.post("/", protect, createFeedback);
 
-// Get My Feedback
+
+// GET MY FEEDBACK
 router.get("/my-feedback", protect, getMyFeedback);
 
-// Update Feedback
+
+// UPDATE FEEDBACK
 router.put("/:id", protect, updateFeedback);
 
-// Delete Feedback
+
+// DELETE FEEDBACK
 router.delete("/:id", protect, deleteFeedback);
+
 
 module.exports = router;

@@ -2,10 +2,10 @@ const mongoose = require("mongoose");
 
 const feedbackSchema = new mongoose.Schema(
   {
-    student: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Student",
-      required: true
+    name: {
+      type: String,
+      required: true,
+      trim: true
     },
 
     rating: {
@@ -15,11 +15,16 @@ const feedbackSchema = new mongoose.Schema(
       max: 5
     },
 
-    comment: {
+    comments: {
       type: String,
       required: true,
-      trim: true,
-      minlength: 3
+      trim: true
+    },
+
+    student: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Student",
+      required: true
     }
   },
   {

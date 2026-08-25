@@ -1,22 +1,21 @@
 const Feedback = require("../models/Feedback");
 
-// ==========================
 // CREATE FEEDBACK
-// ==========================
 const createFeedback = async (req, res) => {
   try {
-    const { rating, comment } = req.body;
+    const { name, rating, comments } = req.body;
 
-    if (!rating || !comment) {
+    if (!name || !rating || !comments) {
       return res.status(400).json({
-        message: "Rating and comment are required"
+        message: "Name, rating and comments are required"
       });
     }
 
     const feedback = await Feedback.create({
-      student: req.student._id,
+      name,
       rating,
-      comment
+      comments,
+      student: req.student._id
     });
 
     return res.status(201).json({
@@ -31,16 +30,11 @@ const createFeedback = async (req, res) => {
   }
 };
 
-// ==========================
-// GET MY FEEDBACK
-// ==========================
-const getMyFeedback = async (req, res) => {
+
+// GET ALL FEEDBACK
+const getAllFeedback = async (req, res) => {
   try {
-    const feedbacks = await Feedback.find({
-      student: req.student._id
-    })
-      .populate("student", "name email")
-      .sort({ createdAt: -1 });
+    const feedbacks = await Feedback.find();
 
     return res.status(200).json({
       count: feedbacks.length,
@@ -54,9 +48,28 @@ const getMyFeedback = async (req, res) => {
   }
 };
 
-// ==========================
+
+// GET MY FEEDBACK
+const getMyFeedback = async (req, res) => {
+  try {
+    const feedbacks = await Feedback.find({
+      student: req.student._id
+    });
+
+    return res.status(200).json({
+      count: feedbacks.length,
+      feedbacks
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message
+    });
+  }
+};
+
+
 // UPDATE FEEDBACK
-// ==========================
 const updateFeedback = async (req, res) => {
   try {
     const feedback = await Feedback.findById(req.params.id);
@@ -67,21 +80,24 @@ const updateFeedback = async (req, res) => {
       });
     }
 
-    // Check feedback ownership
     if (feedback.student.toString() !== req.student._id.toString()) {
       return res.status(403).json({
         message: "You are not allowed to update this feedback"
       });
     }
 
-    const { rating, comment } = req.body;
+    const { name, rating, comments } = req.body;
+
+    if (name !== undefined) {
+      feedback.name = name;
+    }
 
     if (rating !== undefined) {
       feedback.rating = rating;
     }
 
-    if (comment !== undefined) {
-      feedback.comment = comment;
+    if (comments !== undefined) {
+      feedback.comments = comments;
     }
 
     await feedback.save();
@@ -98,9 +114,8 @@ const updateFeedback = async (req, res) => {
   }
 };
 
-// ==========================
+
 // DELETE FEEDBACK
-// ==========================
 const deleteFeedback = async (req, res) => {
   try {
     const feedback = await Feedback.findById(req.params.id);
@@ -111,7 +126,6 @@ const deleteFeedback = async (req, res) => {
       });
     }
 
-    // Check feedback ownership
     if (feedback.student.toString() !== req.student._id.toString()) {
       return res.status(403).json({
         message: "You are not allowed to delete this feedback"
@@ -131,8 +145,10 @@ const deleteFeedback = async (req, res) => {
   }
 };
 
+
 module.exports = {
   createFeedback,
+  getAllFeedback,
   getMyFeedback,
   updateFeedback,
   deleteFeedback
